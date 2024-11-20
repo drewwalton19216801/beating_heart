@@ -53,7 +53,7 @@ impl Widget<AppState> for HeartWidget {
         // Define the heart shape
         let mut path = BezPath::new();
         let width = size.width.min(size.height) * 0.25 * scale;
-        let height = size.width.min(size.height) * 0.45 * scale;
+        let height = size.width.min(size.height) * 0.48 * scale;
 
         // Start at the bottom tip of the heart
         path.move_to(Point::new(center.x, center.y + height / 2.0));
@@ -74,7 +74,10 @@ impl Widget<AppState> for HeartWidget {
 
         path.close_path();
 
-        ctx.stroke(&path, &Color::rgb8(255, 0, 0), 4.0);
+        ctx.stroke(&path, &Color::rgb8(0, 0, 0), 4.0);
+
+        // Fill the heart with red color
+        ctx.fill(&path, &Color::rgb8(255, 0, 0));
     }
 }
 
