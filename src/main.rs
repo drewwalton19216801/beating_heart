@@ -1,3 +1,4 @@
+/// This example shows how to create a widget that animates a beating heart shape.
 use druid::{
     kurbo::{BezPath, Point},
     piet::{Color, RenderContext},
@@ -13,14 +14,42 @@ struct AppState {
 struct HeartWidget;
 
 impl Widget<AppState> for HeartWidget {
+    /// Handles events for the HeartWidget.
+    ///
+    /// In particular, it processes animation frame events to update the
+    /// animation time and request the next animation frame and repaint.
+    ///
+    /// # Arguments
+    /// 
+    /// * `ctx` - The event context used to request animation frames and painting.
+    /// * `event` - The event being handled. Only `AnimFrame` events are processed.
+    /// * `data` - The application state, which holds the current animation time.
+    /// * `_env` - The environment, which is currently unused.
     fn event(&mut self, ctx: &mut EventCtx, event: &Event, data: &mut AppState, _env: &Env) {
+        // Check if the event is an animation frame event
         if let Event::AnimFrame(_) = event {
-            data.time += 0.016; // Increment time for animation
+            // Increment the animation time
+            data.time += 0.016;
+
+            // Request the next animation frame
             ctx.request_anim_frame();
+
+            // Request a repaint to update the display
             ctx.request_paint();
         }
     }
 
+    /// Handles life cycle events for the HeartWidget.
+    ///
+    /// In particular, it handles the `WidgetAdded` event by requesting
+    /// an animation frame to start the animation loop.
+    ///
+    /// # Arguments
+    /// 
+    /// * `ctx` - The lifecycle context used to request animation frames.
+    /// * `event` - The lifecycle event being handled.
+    /// * `data` - The application state, which is currently unused.
+    /// * `_env` - The environment, which is currently unused.
     fn lifecycle(
         &mut self,
         ctx: &mut LifeCycleCtx,
@@ -29,12 +58,29 @@ impl Widget<AppState> for HeartWidget {
         _env: &Env,
     ) {
         if let LifeCycle::WidgetAdded = event {
-            ctx.request_anim_frame(); // Start the animation loop
+            // Start the animation loop
+            ctx.request_anim_frame();
         }
     }
 
     fn update(&mut self, _ctx: &mut UpdateCtx, _old_data: &AppState, _data: &AppState, _env: &Env) {}
 
+    /// Computes the preferred size of the HeartWidget.
+    ///
+    /// The preferred size is the maximum size allowed by the `BoxConstraints`
+    /// passed in, which should be the size of the window. This makes the widget
+    /// fill the window.
+    ///
+    /// # Arguments
+    ///
+    /// * `_ctx` - The layout context, which is currently unused.
+    /// * `bc` - The box constraints that specify the maximum size allowed.
+    /// * `_data` - The application state, which is currently unused.
+    /// * `_env` - The environment, which is currently unused.
+    ///
+    /// # Returns
+    ///
+    /// The preferred size of the widget.
     fn layout(
         &mut self,
         _ctx: &mut LayoutCtx,
@@ -45,6 +91,18 @@ impl Widget<AppState> for HeartWidget {
         bc.max() // Make the widget fill the window
     }
 
+/// Paints a heart shape on the widget with a beating animation effect.
+/// 
+/// The heart shape is drawn centered within the widget, and its size
+/// oscillates over time to simulate a beating effect. The heart is outlined
+/// in black and filled with red.
+/// 
+/// # Arguments
+/// 
+/// * `ctx` - The painting context used to draw the heart.
+/// * `data` - The application state, which provides the current time for the
+///            beating animation.
+/// * `_env` - The environment, which is currently unused.
     fn paint(&mut self, ctx: &mut PaintCtx, data: &AppState, _env: &Env) {
         let size = ctx.size();
         let center = Point::new(size.width / 2.0, size.height / 2.0);
